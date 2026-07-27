@@ -1,238 +1,996 @@
-let qty = parseInt(input.value) || 1;
-        if(qty > maxStock) qty = maxStock;
-        if(qty < 1) qty = 1;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail Market - Premium Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-body: #0b132b;
+            --card-bg: #1c2541;
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --border-color: #3a506b;
+            --input-bg: #0f172a;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-telegram: #229ed9;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- AUTH SCREEN --- */
+        .auth-container {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            color: var(--text-main);
+        }
+
+        .brand-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .auth-card h3 {
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffffff;
+            font-size: 24px;
+        }
+
+        .form-control {
+            background-color: var(--input-bg) !important;
+            color: #ffffff !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-sub) !important;
+            opacity: 0.85 !important;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue) !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+            color: #ffffff !important;
+        }
+
+        .auth-card .forgot-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn-auth {
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-auth:hover { background: #2563eb; color: #ffffff; }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+
+        .auth-switch a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* --- DASHBOARD STYLING --- */
+        #app-dashboard {
+            background-color: var(--bg-body);
+            width: 100%;
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+        }
+
+        .dashboard-content-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .top-navbar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-content {
+            padding: 25px 15px 100px 15px;
+            flex: 1;
+        }
+
+        .card-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary-custom {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-custom:hover { background: #2563eb; }
+
+        .btn-telegram {
+            background-color: var(--accent-telegram);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-telegram:hover { background-color: #1d82b3; color: #ffffff; }
+
+        .store-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .store-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        
+        .cat-tab-btn {
+            background: var(--input-bg);
+            color: var(--text-sub);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .cat-tab-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- PURE CSS CUSTOM DESIGNED LOGO CARDS --- */
+        .mfs-card {
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mfs-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        .mfs-card.selected {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Custom Logo Cards Base */
+        .mfs-badge-custom {
+            width: 100%;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            gap: 6px;
+        }
+
+        /* bKash Color & Style */
+        .mfs-badge-bkash {
+            background: linear-gradient(135deg, #e2136e, #b00a52);
+            color: #ffffff;
+        }
+
+        /* Nagad Color & Style */
+        .mfs-badge-nagad {
+            background: linear-gradient(135deg, #f7921e, #d8381e);
+            color: #ffffff;
+        }
+
+        /* Rocket Color & Style */
+        .mfs-badge-rocket {
+            background: linear-gradient(135deg, #8c3494, #5a1e62);
+            color: #ffffff;
+        }
+
+        .deposit-box {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .deposit-num-box {
+            background: #070b14;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .deposit-num-text {
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.15rem;
+            letter-spacing: 1.5px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .bottom-nav {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+
+        .bottom-nav a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 11px;
+            text-align: center;
+            display: block;
+            transition: 0.2s;
+        }
+        .bottom-nav a.active { color: var(--accent-blue); font-weight: 600; }
+        .bottom-nav i { font-size: 18px; display: block; margin-bottom: 3px; }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* Popup Notification */
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .custom-alert-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            padding: 20px 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            animation: alertPop 0.25s ease-out forwards;
+        }
+
+        @keyframes alertPop {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .btn-close-custom {
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .btn-close-custom:hover { color: #ffffff; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- CUSTOM POPUP MODAL -->
+    <div id="custom-alert-overlay" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-info"><i class="fa-solid fa-circle-info me-2"></i>Notification</span>
+                <button type="button" onclick="closeCustomAlert()" class="btn-close-custom">&times;</button>
+            </div>
+            <div id="custom-alert-message" class="text-white small py-2 mb-3"></div>
+            <div class="text-end">
+                <button onclick="closeCustomAlert()" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-section" class="auth-container">
+        <!-- LOGIN CARD -->
+        <div id="login-card" class="auth-card">
+            <div class="brand-logo-wrapper">
+                <div class="brand-logo-icon">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <h4 class="m-0 fw-bold text-white">Mail Market</h4>
+            </div>
+            <h3>Account Login</h3>
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Gmail Address</label>
+                <input type="email" id="login-email" class="form-control" placeholder="example@gmail.com">
+            </div>
+            <div class="mb-2">
+                <label class="small text-sub mb-1">Password</label>
+                <input type="password" id="login-pass" class="form-control" placeholder="••••••••">
+            </div>
+            <div class="text-start mb-3">
+                <a href="#" onclick="showCustomAlert('Please contact Telegram support to reset password.')" class="forgot-link">Forgot password?</a>
+            </div>
+            <button onclick="handleLogin()" class="btn-auth">Login to Account</button>
+            <div class="auth-switch">
+                Don't have an account? <a href="#" onclick="toggleAuthView('signup')">Create Account</a>
+            </div>
+        </div>
+
+        <!-- SIGNUP CARD -->
+        <div id="signup-card" class="auth-card" style="display: none;">
+            <div class="brand-logo-wrapper">
+                <div class="brand-logo-icon">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <h4 class="m-0 fw-bold text-white">Mail Market</h4>
+            </div>
+            <h3>Create Account</h3>
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Gmail Address</label>
+                <input type="email" id="signup-email" class="form-control" placeholder="example@gmail.com">
+            </div>
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Password</label>
+                <input type="password" id="signup-pass" class="form-control" placeholder="At least 6 characters">
+            </div>
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Confirm Password</label>
+                <input type="password" id="signup-confirm-pass" class="form-control" placeholder="Re-enter password">
+            </div>
+            <button onclick="handleRegister()" class="btn-auth">Register Account</button>
+            <div class="auth-switch">
+                Already have an account? <a href="#" onclick="toggleAuthView('login')">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="app-dashboard">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="dashboard-content-wrapper d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="brand-logo-icon" style="width: 32px; height: 32px; font-size: 16px;">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <h5 class="m-0 fw-bold text-white fs-6">Mail Market</h5>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <a href="https://t.me/your_telegram_username" target="_blank" class="btn-telegram py-1 px-2.5" style="font-size: 12px; border-radius: 20px;">
+                        <i class="fa-brands fa-telegram"></i> Support
+                    </a>
+                    <div class="badge bg-primary fs-6 py-1.5 px-3 rounded-pill">
+                        ৳<span id="nav-balance">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Pages -->
+        <div class="page-content">
+            <div class="dashboard-content-wrapper">
+                
+                <!-- HOME STORE -->
+                <div id="home-section" class="page-section">
+                    <div class="category-scroll mb-3" id="cat-tabs-container"></div>
+                    <div id="store-items-container" class="store-grid"></div>
+                </div>
+
+                <!-- DEPOSIT PAGE -->
+                <div id="deposit-section" class="page-section">
+                    <div class="card-box">
+                        <h5 class="fw-bold mb-1 text-success"><i class="fa-solid fa-wallet me-2"></i>Add Deposit</h5>
+                        <p class="text-sub small mb-3">Minimum Deposit Amount is <b>৳20</b>. Select payment method and submit TrxID.</p>
+
+                        <!-- Custom Designed MFS Logo Cards -->
+                        <div class="row g-3 mb-4" id="mfs-cards-container"></div>
+
+                        <div class="deposit-box mb-3" id="payment-instruction-box" style="display:none;">
+                            <span class="small text-sub">Send Money to <b id="mfs-name-tag" class="text-info"></b> Personal Number:</span>
+                            <div class="deposit-num-box d-flex justify-content-between align-items-center mt-2">
+                                <span id="mfs-num-tag" class="deposit-num-text"></span>
+                                <button onclick="copyActiveAgentNum()" class="btn btn-sm btn-outline-info rounded-pill px-3"><i class="fa-solid fa-copy me-1"></i>Copy</button>
+                            </div>
+                        </div>
+
+                        <!-- FIRST BOX: Amount Sent -->
+                        <div class="mb-3">
+                            <label class="small text-sub mb-1">Amount Sent (Min ৳20)</label>
+                            <input type="number" id="deposit-amount" class="form-control" placeholder="20">
+                        </div>
+
+                        <!-- SECOND BOX: Transaction ID -->
+                        <div class="mb-4">
+                            <label class="small text-sub mb-1">Transaction ID (TrxID)</label>
+                            <input type="text" id="deposit-trx" class="form-control" placeholder="e.g. 9H7K3L2M1">
+                        </div>
+
+                        <button onclick="submitDepositRequest()" class="btn-primary-custom" style="background:var(--accent-green);">Submit Deposit Request</button>
+                    </div>
+                </div>
+
+                <!-- HISTORY PAGE -->
+                <div id="history-section" class="page-section">
+                    <div class="card-box">
+                        <h5 class="fw-bold mb-3 text-info"><i class="fa-solid fa-clock-rotate-left me-2"></i>Transaction History</h5>
+                        <div id="user-history-list"></div>
+                    </div>
+                </div>
+
+                <!-- PROFILE PAGE -->
+                <div id="profile-section" class="page-section">
+                    <div class="card-box text-center">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-circle-user text-primary" style="font-size: 65px;"></i>
+                        </div>
+                        <h5 class="fw-bold text-white mb-1" id="profile-email-text">user@gmail.com</h5>
+                        <div class="text-sub small mb-3">Password: <span id="profile-pass-text" class="font-monospace text-warning">******</span></div>
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <span class="badge bg-primary fs-6 py-2 px-3 rounded-pill"><i class="fa-solid fa-wallet me-1"></i>৳<span id="profile-balance-text">0.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="https://t.me/your_telegram_username" target="_blank" class="btn-telegram">
+                                <i class="fa-brands fa-telegram fs-5"></i> Official Telegram Support
+                            </a>
+                            <button onclick="logoutUser()" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-box">
+                        <h6 class="fw-bold mb-3 text-warning"><i class="fa-solid fa-envelope me-2"></i>Purchased Mails</h6>
+                        <div id="profile-purchased-mails-list"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Fixed Bottom Navigation Bar -->
+        <div class="bottom-nav-container">
+            <div class="bottom-nav">
+                <div class="row text-center m-0">
+                    <div class="col-3"><a href="#" onclick="switchTab('home')" class="active" id="nav-btn-home"><i class="fa-solid fa-house"></i>Home</a></div>
+                    <div class="col-3"><a href="#" onclick="switchTab('deposit')" id="nav-btn-deposit"><i class="fa-solid fa-wallet"></i>Deposit</a></div>
+                    <div class="col-3"><a href="#" onclick="switchTab('history')" id="nav-btn-history"><i class="fa-solid fa-history"></i>History</a></div>
+                    <div class="col-3"><a href="#" onclick="switchTab('profile')" id="nav-btn-profile"><i class="fa-solid fa-user"></i>Profile</a></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Purchase Modal -->
+<div class="modal fade" id="buyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-box border-secondary p-2">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary" id="modal-item-title">Confirm Purchase</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modal-body-content"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentUser = JSON.parse(localStorage.getItem('app_current_user')) || null;
+    let selectedCategory = '';
+    let chosenMFSName = '';
+    let chosenMFSNum = '';
+
+    // Pure CSS & Icon-based MFS Cards
+    const BRAND_MFS_LOGOS = {
+        'bkash': `<div class="mfs-badge-custom mfs-badge-bkash"><i class="fa-solid fa-bolt"></i> bKash</div>`,
+        'nagad': `<div class="mfs-badge-custom mfs-badge-nagad"><i class="fa-solid fa-fire"></i> Nagad</div>`,
+        'rocket': `<div class="mfs-badge-custom mfs-badge-rocket"><i class="fa-solid fa-rocket"></i> Rocket</div>`
+    };
+
+    function showCustomAlert(msg) {
+        document.getElementById('custom-alert-message').innerText = msg;
+        document.getElementById('custom-alert-overlay').style.display = 'flex';
+    }
+
+    function closeCustomAlert() {
+        document.getElementById('custom-alert-overlay').style.display = 'none';
+    }
+
+    function isValidGmail(email) {
+        return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+    }
+
+    function toggleAuthView(view) {
+        if(view === 'signup') {
+            document.getElementById('login-card').style.display = 'none';
+            document.getElementById('signup-card').style.display = 'block';
+        } else {
+            document.getElementById('signup-card').style.display = 'none';
+            document.getElementById('login-card').style.display = 'block';
+        }
+    }
+
+    function checkLoginState() {
+        if(currentUser) {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('app-dashboard').style.display = 'flex';
+            switchTab('home');
+            updateUserBalanceDisplay();
+        } else {
+            document.getElementById('auth-section').style.display = 'flex';
+            document.getElementById('app-dashboard').style.display = 'none';
+        }
+    }
+
+    function handleRegister() {
+        let email = document.getElementById('signup-email').value.trim().toLowerCase();
+        let pass = document.getElementById('signup-pass').value.trim();
+        let confirmPass = document.getElementById('signup-confirm-pass').value.trim();
+
+        if(!email || !pass || !confirmPass) return showCustomAlert('Please fill in all fields!');
+        if(!isValidGmail(email)) return showCustomAlert('You must enter a valid Gmail address!');
+        if(pass.length < 6) return showCustomAlert('Password must be at least 6 characters long!');
+        if(pass !== confirmPass) return showCustomAlert('Passwords do not match!');
+
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        if(users.find(u => u.email === email)) {
+            return showCustomAlert('An account already exists with this Gmail!');
+        }
+
+        let newUser = { email: email, pass: pass, balance: 0, history: [] };
+        users.push(newUser);
+        localStorage.setItem('app_users', JSON.stringify(users));
+        
+        currentUser = newUser;
+        localStorage.setItem('app_current_user', JSON.stringify(currentUser));
+        
+        showCustomAlert('Account Created Successfully!');
+        checkLoginState();
+    }
+
+    function handleLogin() {
+        let email = document.getElementById('login-email').value.trim().toLowerCase();
+        let pass = document.getElementById('login-pass').value.trim();
+
+        if(!email || !pass) return showCustomAlert('Please enter Gmail and Password!');
+        if(!isValidGmail(email)) return showCustomAlert('Please enter a valid Gmail address!');
+
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let user = users.find(u => u.email === email && u.pass === pass);
+
+        if(!user) return showCustomAlert('Invalid Gmail or Password!');
+
+        currentUser = user;
+        localStorage.setItem('app_current_user', JSON.stringify(currentUser));
+        
+        checkLoginState();
+    }
+
+    function logoutUser() {
+        localStorage.removeItem('app_current_user');
+        currentUser = null;
+        checkLoginState();
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.page-content .page-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.bottom-nav a').forEach(el => el.classList.remove('active'));
+
+        if(tabName === 'home') {
+            document.getElementById('home-section').classList.add('active');
+            document.getElementById('nav-btn-home').classList.add('active');
+            loadStoreCategories();
+        } else if(tabName === 'deposit') {
+            document.getElementById('deposit-section').classList.add('active');
+            document.getElementById('nav-btn-deposit').classList.add('active');
+            loadPaymentMethods();
+        } else if(tabName === 'history') {
+            document.getElementById('history-section').classList.add('active');
+            document.getElementById('nav-btn-history').classList.add('active');
+            loadUserHistory();
+        } else if(tabName === 'profile') {
+            document.getElementById('profile-section').classList.add('active');
+            document.getElementById('nav-btn-profile').classList.add('active');
+            loadUserProfile();
+        }
+    }
+
+    function updateUserBalanceDisplay() {
+        if(!currentUser) return;
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let u = users.find(x => x.email === currentUser.email);
+        if(u) {
+            currentUser = u;
+            localStorage.setItem('app_current_user', JSON.stringify(currentUser));
+            document.getElementById('nav-balance').innerText = Number(u.balance || 0).toFixed(2);
+        }
+    }
+
+    function loadStoreCategories() {
+        let store = JSON.parse(localStorage.getItem('app_store_data')) || {};
+        let cats = Object.keys(store);
+        let container = document.getElementById('cat-tabs-container');
+        container.innerHTML = '';
+
+        if(cats.length === 0) {
+            renderStoreItems();
+            return;
+        }
+
+        if(!selectedCategory || !store[selectedCategory]) selectedCategory = cats[0];
+
+        cats.forEach(cat => {
+            let activeClass = cat === selectedCategory ? 'active' : '';
+            container.innerHTML += `<button class="cat-tab-btn ${activeClass}" onclick="selectCategory('${cat}')">${cat}</button>`;
+        });
+
+        renderStoreItems();
+    }
+
+    function selectCategory(cat) {
+        selectedCategory = cat;
+        loadStoreCategories();
+    }
+
+    function renderStoreItems() {
+        let store = JSON.parse(localStorage.getItem('app_store_data')) || {};
+        let container = document.getElementById('store-items-container');
+        container.innerHTML = '';
+
+        if(!selectedCategory || !store[selectedCategory] || store[selectedCategory].length === 0) {
+            container.innerHTML = '<div class="text-sub text-center py-4 small col-12">No products available.</div>';
+            return;
+        }
+
+        store[selectedCategory].forEach((item, itemIdx) => {
+            let count = item.mails ? item.mails.length : 0;
+            container.innerHTML += `
+                <div class="card-box d-flex justify-content-between align-items-center m-0">
+                    <div>
+                        <div class="fw-bold text-white fs-6 mb-1">${item.title}</div>
+                        <div class="text-warning fw-bold mb-1">৳${Number(item.price).toFixed(2)} <span class="small text-sub font-normal">/ unit</span></div>
+                        <div class="small text-sub"><i class="fa-solid fa-box me-1"></i>Stock: <span class="${count > 0 ? 'text-success fw-bold' : 'text-danger'}">${count} pcs</span></div>
+                    </div>
+                    <button onclick="openBuyModal('${selectedCategory}', ${itemIdx})" class="btn btn-primary fw-bold px-3 py-2 rounded-pill" ${count === 0 ? 'disabled' : ''}>
+                        ${count === 0 ? 'Out of Stock' : 'Buy Now'}
+                    </button>
+                </div>`;
+        });
+    }
+
+    function openBuyModal(cat, index) {
+        let store = JSON.parse(localStorage.getItem('app_store_data')) || {};
+        let item = store[cat][index];
+        let maxStock = item.mails ? item.mails.length : 0;
+        let unitPrice = Number(item.price);
+
+        document.getElementById('modal-item-title').innerText = item.title;
+        document.getElementById('modal-body-content').innerHTML = `
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Quantity (Stock: ${maxStock})</label>
+                <input type="number" id="modal-qty-input" class="form-control" value="1" min="1" max="${maxStock}" oninput="updateTotalCost(${unitPrice}, ${maxStock})">
+            </div>
+            <div class="mb-3">
+                <label class="small text-sub mb-1">Total Price</label>
+                <div class="fs-5 fw-bold text-success" id="modal-total-price">৳${unitPrice.toFixed(2)}</div>
+            </div>
+            <button onclick="confirmPurchase('${cat}', ${index})" class="btn-primary-custom">Confirm Purchase</button>
+        `;
+
+        new bootstrap.Modal(document.getElementById('buyModal')).show();
+    }
+
+    function updateTotalCost(unitPrice, maxStock) {
+        let input = document.getElementById('modal-qty-input');
+        let qty = parseInt(input.value) || 1;
+        if (qty < 1) qty = 1;
+        if (qty > maxStock) qty = maxStock;
         input.value = qty;
-        document.getElementById('modal-total-price').innerText = '৳' + (unitPrice * qty).toFixed(2);
+        document.getElementById('modal-total-price').innerText = '৳' + (qty * unitPrice).toFixed(2);
     }
 
     function confirmPurchase(cat, index) {
-        let qty = parseInt(document.getElementById('modal-qty-input').value) || 1;
         let store = JSON.parse(localStorage.getItem('app_store_data')) || {};
         let item = store[cat][index];
-        let totalCost = Number(item.price) * qty;
+        let qty = parseInt(document.getElementById('modal-qty-input').value) || 1;
+        let totalCost = qty * Number(item.price);
 
-        updateUserBalanceDisplay();
-        if(currentUser.balance < totalCost) {
-            return showCustomAlert('Insufficient balance! Please deposit funds first.');
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let u = users.find(x => x.email === currentUser.email);
+
+        if(!u || u.balance < totalCost) {
+            return showCustomAlert('Insufficient balance! Please deposit money first.');
         }
 
-        if(!item.mails || item.mails.length < qty) {
-            return showCustomAlert('Not enough stock available!');
-        }
+        u.balance -= totalCost;
+        let boughtMails = item.mails.splice(0, qty);
 
-        // Deduct mails from stock
-        let purchasedMails = item.mails.splice(0, qty);
-        store[cat][index] = item;
-        localStorage.setItem('app_store_data', JSON.stringify(store));
-
-        // Deduct balance
-        currentUser.balance -= totalCost;
-        
-        // Record purchase history
-        let purchaseRecord = {
-            id: 'TXN-' + Math.floor(100000 + Math.random() * 900000),
-            type: 'Purchase',
+        if(!u.purchasedMails) u.purchasedMails = [];
+        u.purchasedMails.push({
             title: item.title,
             qty: qty,
-            amount: totalCost,
-            mails: purchasedMails,
-            date: new Date().toLocaleString()
-        };
+            price: totalCost,
+            date: new Date().toLocaleString(),
+            mails: boughtMails
+        });
 
-        if(!currentUser.history) currentUser.history = [];
-        currentUser.history.unshift(purchaseRecord);
+        localStorage.setItem('app_store_data', JSON.stringify(store));
+        localStorage.setItem('app_users', JSON.stringify(users));
 
-        // Update database user array
-        let users = JSON.parse(localStorage.getItem('app_users')) || [];
-        let uIndex = users.findIndex(u => u.email === currentUser.email);
-        if(uIndex !== -1) {
-            users[uIndex] = currentUser;
-            localStorage.setItem('app_users', JSON.stringify(users));
-        }
+        currentUser = u;
         localStorage.setItem('app_current_user', JSON.stringify(currentUser));
 
-        // Close modal and refresh UI
-        let modalEl = document.getElementById('buyModal');
-        let modalInstance = bootstrap.Modal.getInstance(modalEl);
-        modalInstance.hide();
-
+        bootstrap.Modal.getInstance(document.getElementById('buyModal')).hide();
+        showCustomAlert('Purchase successful!');
         updateUserBalanceDisplay();
-        loadStoreCategories();
-        showCustomAlert(`Purchase successful! ${qty} item(s) acquired.`);
+        renderStoreItems();
     }
 
     function loadPaymentMethods() {
-        let paymentSettings = JSON.parse(localStorage.getItem('app_payment_methods')) || {
-            bkash: { name: 'bKash', num: '01700000000', active: true },
-            nagad: { name: 'Nagad', num: '01800000000', active: true },
-            rocket: { name: 'Rocket', num: '01900000000', active: true }
-        };
-
         let container = document.getElementById('mfs-cards-container');
         container.innerHTML = '';
-        let hasActive = false;
 
-        for (let key in paymentSettings) {
-            let mfs = paymentSettings[key];
-            if (mfs && mfs.active && mfs.num) {
-                hasActive = true;
-                let isSelectedClass = chosenMFSName === mfs.name ? 'selected' : '';
-                container.innerHTML += `
-                    <div class="col-4">
-                        <div class="mfs-card ${isSelectedClass}" onclick="selectMFS('${mfs.name}', '${mfs.num}')">
-                            ${BRAND_MFS_LOGOS[key] || `<div class="mfs-badge-custom bg-secondary">${mfs.name}</div>`}
-                            <span class="small text-sub mt-2 d-block" style="font-size:11px;">Personal</span>
-                        </div>
+        let methods = JSON.parse(localStorage.getItem('app_mfs_methods')) || [
+            { key: 'bkash', name: 'bKash', number: '01700000000' },
+            { key: 'nagad', name: 'Nagad', number: '01800000000' },
+            { key: 'rocket', name: 'Rocket', number: '01900000000' }
+        ];
+
+        methods.forEach(m => {
+            let logoHtml = BRAND_MFS_LOGOS[m.key.toLowerCase()] || `<div class="mfs-badge-custom mfs-badge-bkash">${m.name}</div>`;
+            container.innerHTML += `
+                <div class="col-4">
+                    <div class="mfs-card ${chosenMFSName === m.name ? 'selected' : ''}" onclick="selectMFSMethod('${m.key}', '${m.name}', '${m.number}')">
+                        ${logoHtml}
                     </div>
-                `;
-            }
-        }
-
-        if(!hasActive) {
-            container.innerHTML = '<div class="text-sub text-center small col-12">No payment methods configured by admin.</div>';
-        }
+                </div>
+            `;
+        });
     }
 
-    function selectMFS(name, num) {
+    function selectMFSMethod(key, name, number) {
         chosenMFSName = name;
-        chosenMFSNum = num;
-        loadPaymentMethods();
+        chosenMFSNum = number;
 
-        document.getElementById('payment-instruction-box').style.display = 'block';
         document.getElementById('mfs-name-tag').innerText = name;
-        document.getElementById('mfs-num-tag').innerText = num;
+        document.getElementById('mfs-num-tag').innerText = number;
+        document.getElementById('payment-instruction-box').style.display = 'block';
+
+        loadPaymentMethods();
     }
 
     function copyActiveAgentNum() {
         if(!chosenMFSNum) return;
         navigator.clipboard.writeText(chosenMFSNum);
-        showCustomAlert('Number copied to clipboard: ' + chosenMFSNum);
+        showCustomAlert('Number copied to clipboard!');
     }
 
     function submitDepositRequest() {
         let amount = parseFloat(document.getElementById('deposit-amount').value);
         let trx = document.getElementById('deposit-trx').value.trim();
 
-        if(!chosenMFSName) return showCustomAlert('Please select a payment method (bKash/Nagad/Rocket)!');
-        if(isNaN(amount) || amount < 20) return showCustomAlert('Minimum deposit amount is ৳20!');
-        if(!trx) return showCustomAlert('Please enter the Transaction ID (TrxID)!');
+        if(!chosenMFSName) return showCustomAlert('Please select a payment method!');
+        if(!amount || amount < 20) return showCustomAlert('Minimum deposit amount is ৳20!');
+        if(!trx) return showCustomAlert('Please enter Transaction ID!');
 
-        let depositReq = {
-            id: 'DEP-' + Math.floor(100000 + Math.random() * 900000),
+        let requests = JSON.parse(localStorage.getItem('app_deposit_requests')) || [];
+        requests.push({
             email: currentUser.email,
             method: chosenMFSName,
-            number: chosenMFSNum,
-            amount: amount,
             trx: trx,
+            amount: amount,
             status: 'Pending',
             date: new Date().toLocaleString()
-        };
+        });
 
-        let allDeposits = JSON.parse(localStorage.getItem('app_deposit_requests')) || [];
-        allDeposits.unshift(depositReq);
-        localStorage.setItem('app_deposit_requests', JSON.stringify(allDeposits));
+        localStorage.setItem('app_deposit_requests', JSON.stringify(requests));
 
-        // Also add to user history tracking as pending
-        let historyRecord = {
-            id: depositReq.id,
-            type: 'Deposit Request',
-            title: `${chosenMFSName} Deposit`,
-            amount: amount,
-            status: 'Pending',
-            date: depositReq.date
-        };
-        if(!currentUser.history) currentUser.history = [];
-        currentUser.history.unshift(historyRecord);
-
-        let users = JSON.parse(localStorage.getItem('app_users')) || [];
-        let uIndex = users.findIndex(u => u.email === currentUser.email);
-        if(uIndex !== -1) {
-            users[uIndex] = currentUser;
-            localStorage.setItem('app_users', JSON.stringify(users));
-        }
-        localStorage.setItem('app_current_user', JSON.stringify(currentUser));
-
-        document.getElementById('deposit-amount').value = '';
         document.getElementById('deposit-trx').value = '';
-        document.getElementById('payment-instruction-box').style.display = 'none';
-        chosenMFSName = '';
-        chosenMFSNum = '';
-        loadPaymentMethods();
-
-        showCustomAlert('Deposit request submitted successfully! Waiting for admin approval.');
+        document.getElementById('deposit-amount').value = '';
+        showCustomAlert('Deposit request submitted successfully! Awaiting approval.');
     }
 
     function loadUserHistory() {
-        updateUserBalanceDisplay();
         let container = document.getElementById('user-history-list');
         container.innerHTML = '';
 
-        if(!currentUser.history || currentUser.history.length === 0) {
+        let requests = JSON.parse(localStorage.getItem('app_deposit_requests')) || [];
+        let userReqs = requests.filter(r => r.email === currentUser.email);
+
+        if(userReqs.length === 0) {
             container.innerHTML = '<div class="text-sub text-center py-3 small">No transaction history found.</div>';
             return;
         }
 
-        currentUser.history.forEach(item => {
-            let badgeColor = item.status === 'Pending' ? 'bg-warning text-dark' : (item.type === 'Purchase' ? 'bg-success' : 'bg-primary');
-            let detailsHtml = '';
-
-            if(item.mails && item.mails.length > 0) {
-                let formattedMails = item.mails.join('\n');
-                detailsHtml = `
-                    <div class="mt-2">
-                        <textarea class="form-control font-monospace text-xs bg-dark text-info" rows="3" readonly>${formattedMails}</textarea>
-                    </div>
-                `;
-            }
-
+        userReqs.reverse().forEach(r => {
+            let statusBadge = r.status === 'Approved' ? 'bg-success' : (r.status === 'Rejected' ? 'bg-danger' : 'bg-warning text-dark');
             container.innerHTML += `
-                <div class="deposit-box mb-2">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-bold text-white small">${item.title}</span>
-                        <span class="badge ${badgeColor} px-2 py-1">${item.status || item.type}</span>
+                <div class="deposit-box mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold text-white small">${r.method} - ৳${r.amount.toFixed(2)}</div>
+                        <div class="text-sub font-monospace extra-small">TrxID: ${r.trx}</div>
+                        <div class="text-sub extra-small">${r.date}</div>
                     </div>
-                    <div class="d-flex justify-content-between text-sub" style="font-size: 12px;">
-                        <span>Amount: <b class="text-white">৳${Number(item.amount).toFixed(2)}</b></span>
-                        <span>${item.date}</span>
-                    </div>
-                    ${detailsHtml}
+                    <span class="badge ${statusBadge}">${r.status}</span>
                 </div>
             `;
         });
     }
 
     function loadUserProfile() {
-        updateUserBalanceDisplay();
+        if(!currentUser) return;
         document.getElementById('profile-email-text').innerText = currentUser.email;
+        document.getElementById('profile-pass-text').innerText = currentUser.pass;
         document.getElementById('profile-balance-text').innerText = Number(currentUser.balance || 0).toFixed(2);
-        
-        let purchasedContainer = document.getElementById('profile-purchased-mails-list');
-        purchasedContainer.innerHTML = '';
 
-        let purchases = (currentUser.history || []).filter(h => h.type === 'Purchase');
-        if(purchases.length === 0) {
-            purchasedContainer.innerHTML = '<div class="text-sub small text-center py-2">No purchased mails found.</div>';
+        let container = document.getElementById('profile-purchased-mails-list');
+        container.innerHTML = '';
+
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let u = users.find(x => x.email === currentUser.email);
+
+        if(!u || !u.purchasedMails || u.purchasedMails.length === 0) {
+            container.innerHTML = '<div class="text-sub text-center py-3 small">No purchased mails yet.</div>';
             return;
         }
 
-        purchases.forEach(p => {
-            let mailsText = p.mails ? p.mails.join('\n') : '';
-            purchasedContainer.innerHTML += `
+        u.purchasedMails.slice().reverse().forEach(p => {
+            let mailListText = p.mails ? p.mails.join('\n') : '';
+            container.innerHTML += `
                 <div class="deposit-box mb-2">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="fw-bold text-white small">${p.title} (${p.qty} pcs)</span>
-                        <span class="text-sub" style="font-size: 11px;">${p.date}</span>
+                        <span class="text-success fw-bold small">৳${p.price.toFixed(2)}</span>
                     </div>
-                    <textarea class="form-control font-monospace text-xs bg-dark text-info mt-1" rows="3" readonly>${mailsText}</textarea>
+                    <div class="text-sub extra-small mb-2">${p.date}</div>
+                    <textarea class="form-control form-control-sm font-monospace" rows="3" readonly>${mailListText}</textarea>
                 </div>
             `;
         });
     }
 
-    // Initialize application state on page load
-    window.onload = function() {
-        checkLoginState();
-    };
+    checkLoginState();
 </script>
 </body>
 </html>
