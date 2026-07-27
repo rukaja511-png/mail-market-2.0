@@ -3,44 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexStore - Admin Panel</title>
+    <title>ApexStore - Admin & User Complete Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase App & Firestore SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: #0b0b0b; color: #e5e5e5; padding-bottom: 50px; }
-        .login-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
-        .auth-card { background: #141414; border: 1px solid #00ffcc; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 4px 20px rgba(0, 255, 204, 0.2); overflow: hidden; }
-        .auth-header { background: #000; color: #00ffcc; padding: 25px; text-align: center; border-bottom: 1px solid #222; }
-        .auth-body { padding: 25px; }
-        .admin-navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: #000; border-bottom: 1px solid #00ffcc; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
-        .admin-logo h1 { font-size: 18px; color: #00ffcc; text-shadow: 0 0 8px rgba(0, 255, 204, 0.6); }
-        .admin-container { max-width: 1000px; margin: 25px auto; padding: 0 15px; display: none; }
-        .admin-section { background: #141414; border: 1px solid #262626; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .admin-section h2 { font-size: 16px; color: #00ffcc; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
-        .input-group label { font-size: 12px; color: #aaa; font-weight: 500; }
-        .input-group input, .input-group select, .input-group textarea { padding: 10px 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
-        .admin-btn { background: #00ffcc; color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; width: 100%; }
-        .admin-btn:hover { background: #00cc99; box-shadow: 0 0 10px rgba(0, 255, 204, 0.5); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #222; }
-        .data-table th { color: #00ffcc; background: #1a1a1a; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0b;
+            color: #e5e5e5;
+            padding-bottom: 50px;
+        }
+
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #141414;
+            border: 1px solid #00ffcc;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 255, 204, 0.2);
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: #000;
+            color: #00ffcc;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid #222;
+        }
+
+        .auth-body {
+            padding: 25px;
+        }
+
+        .admin-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: #000;
+            border-bottom: 1px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+        }
+
+        .admin-logo h1 {
+            font-size: 18px;
+            color: #00ffcc;
+            text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+        }
+
+        .admin-container, .user-container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 0 15px;
+            display: none;
+        }
+
+        .admin-section {
+            background: #141414;
+            border: 1px solid #262626;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .admin-section h2 {
+            font-size: 16px;
+            color: #00ffcc;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 5px rgba(0, 255, 204, 0.4);
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .toggle-password:hover {
+            color: #00ffcc;
+        }
+
+        .admin-btn {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .admin-btn:hover {
+            background: #00cc99;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+        }
+
+        .data-table th {
+            color: #00ffcc;
+            background: #1a1a1a;
+        }
+
         .badge-on { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .badge-off { background: rgba(255, 85, 85, 0.1); color: #ff5555; border: 1px solid #ff5555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .badge-pending { background: rgba(255, 165, 0, 0.1); color: #ffa500; border: 1px solid #ffa500; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .badge-approved { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid #00ffcc; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .badge-rejected { background: rgba(255, 85, 85, 0.1); color: #ff5555; border: 1px solid #ff5555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-        .action-btns { display: flex; gap: 6px; }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
         .btn-success { background: #00ffcc; color: #000; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; }
         .btn-danger { background: #ff5555; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; }
-        .nav-link-btn { background: rgba(0, 255, 204, 0.1); border: 1px solid #00ffcc; color: #00ffcc; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        
+        .nav-link-btn {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-link-btn:hover {
+            background: #00ffcc;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -49,8 +230,8 @@
     <div id="adminLoginView" class="login-wrapper">
         <div class="auth-card">
             <div class="auth-header">
-                <h2><i class="fa-solid fa-shield-halved"></i> Admin Login</h2>
-                <p style="font-size: 12px; color: #888; margin-top: 5px;">Secure Admin Panel</p>
+                <h2><i class="fa-solid fa-shield-halved"></i> Admin Portal</h2>
+                <p style="font-size: 12px; color: #888; margin-top: 5px;">Local Storage Secure Panel</p>
             </div>
             <div class="auth-body">
                 <div class="input-group">
@@ -59,11 +240,16 @@
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="adminPassInput" placeholder="Enter password">
+                    <div class="password-container">
+                        <input type="password" id="adminPassInput" placeholder="Enter password">
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                            <i class="fa-solid fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
                 </div>
-                <button class="admin-btn" onclick="verifyAdminLogin()">Login</button>
+                <button class="admin-btn" onclick="verifyAdminLogin()">Login to Dashboard</button>
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="index.html" style="color: #00ffcc; font-size: 12px; text-decoration: none;">&larr; Go to User Website</a>
+                    <button onclick="switchToUserPanel()" style="background:none; border:none; color:#00ffcc; font-size:12px; cursor:pointer; text-decoration:underline;">Go to User Website</button>
                 </div>
             </div>
         </div>
@@ -75,7 +261,7 @@
             <h1><i class="fa-solid fa-shield-halved"></i> ApexStore Admin</h1>
         </div>
         <div style="display: flex; align-items: center; gap: 12px;">
-            <a href="index.html" class="nav-link-btn" target="_blank"><i class="fa-solid fa-globe"></i> Visit User Panel</a>
+            <button class="nav-link-btn" onclick="switchToUserPanel()"><i class="fa-solid fa-globe"></i> Switch to User Panel</button>
             <button onclick="adminLogout()" style="background: rgba(255,85,85,0.1); border: 1px solid #ff5555; color: #ff5555; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-power-off"></i> Logout</button>
         </div>
     </div>
@@ -83,12 +269,12 @@
     <!-- MAIN ADMIN DASHBOARD -->
     <div class="admin-container" id="adminDashboardContainer">
 
-        <!-- 1. BALANCE MANAGEMENT -->
+        <!-- 1. USER BALANCE MANAGEMENT -->
         <div class="admin-section">
-            <h2><i class="fa-solid fa-wallet"></i> User Balance Management</h2>
+            <h2><i class="fa-solid fa-wallet"></i> User Balance Management (Add / Deduct)</h2>
             <div class="form-grid">
                 <div class="input-group">
-                    <label>User Email</label>
+                    <label>User Email / Account</label>
                     <input type="email" id="manageUserEmail" placeholder="user@gmail.com">
                 </div>
                 <div class="input-group">
@@ -103,48 +289,30 @@
                     <input type="number" id="manageAmount" placeholder="100">
                 </div>
             </div>
-            <button class="admin-btn" style="width: auto;" onclick="updateUserBalanceAdmin()">Update Balance</button>
+            <button class="admin-btn" style="width: auto;" onclick="updateUserBalanceAdmin()">Update User Balance</button>
         </div>
 
         <!-- 2. DEPOSIT CONTROL -->
         <div class="admin-section">
-            <h2><i class="fa-solid fa-money-bill-transfer"></i> Deposit Control</h2>
+            <h2><i class="fa-solid fa-money-bill-transfer"></i> Deposit Control (Approve / Reject)</h2>
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>User Name & Email</th>
+                        <th>User Email</th>
                         <th>Method</th>
                         <th>Amount</th>
-                        <th>TrxID</th>
-                        <th>Status</th>
+                        <th>TrxID / Details</th>
+                        <th>Status / Reason</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="adminDepositTableBody">
-                    <tr><td colspan="6" style="text-align:center; color:#777;">Loading deposits...</td></tr>
+                    <!-- Dynamic deposits -->
                 </tbody>
             </table>
         </div>
 
-        <!-- 3. SUPPORT TICKETS CONTROL -->
-        <div class="admin-section">
-            <h2><i class="fa-solid fa-headset"></i> Support Tickets Control</h2>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>User Name & Email</th>
-                        <th>Message</th>
-                        <th>Status</th>
-                        <th>Action / Reply</th>
-                    </tr>
-                </thead>
-                <tbody id="adminSupportTableBody">
-                    <tr><td colspan="4" style="text-align:center; color:#777;">Loading support tickets...</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 4. CATEGORY MANAGEMENT -->
+        <!-- 3. CATEGORY & DESCRIPTION MANAGEMENT -->
         <div class="admin-section">
             <h2><i class="fa-solid fa-folder-plus"></i> Category & Sub-Category Management</h2>
             <div class="form-grid">
@@ -159,7 +327,7 @@
             </div>
             <div class="input-group">
                 <label>Description</label>
-                <textarea id="newCatDesc" rows="2" placeholder="Description..."></textarea>
+                <textarea id="newCatDesc" rows="2" placeholder="Description visible to users..."></textarea>
             </div>
             <button class="admin-btn" style="width: auto;" onclick="addCategorySystem()">Add Category</button>
 
@@ -177,7 +345,27 @@
             </table>
         </div>
 
-        <!-- 5. PAYMENT METHODS -->
+        <!-- 4. ADD MAIL / ACCOUNTS TO STOCK -->
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-database"></i> Add Mail / Accounts (Stock Upload)</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Select Category</label>
+                    <select id="stockCategorySelect"></select>
+                </div>
+                <div class="input-group">
+                    <label>Price per item (BDT)</label>
+                    <input type="number" id="stockItemPrice" value="8.75">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Accounts Input (email|password)</label>
+                <textarea id="stockAccountsInput" rows="3" placeholder="user1@gmail.com|pass123" style="font-family:monospace; color:#00ffcc;"></textarea>
+            </div>
+            <button class="admin-btn" style="width: auto;" onclick="uploadStockAccounts()">Upload to Stock</button>
+        </div>
+
+        <!-- 5. PAYMENT METHOD MANAGEMENT -->
         <div class="admin-section">
             <h2><i class="fa-solid fa-credit-card"></i> Payment Methods Management</h2>
             <div class="form-grid">
@@ -214,29 +402,94 @@
 
     </div>
 
+    <!-- USER PANEL WEBSITE VIEW -->
+    <div class="user-container" id="userWebsiteContainer">
+        <div class="admin-navbar" style="border-bottom-color: #00ffcc; margin-bottom: 25px; border-radius: 8px;">
+            <div class="admin-logo">
+                <h1><i class="fa-solid fa-store"></i> ApexStore User Panel</h1>
+            </div>
+            <div>
+                <button class="nav-link-btn" onclick="switchToAdminPanel()"><i class="fa-solid fa-shield-halved"></i> Back to Admin Panel</button>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-wallet"></i> My User Simulator (For Testing Deposit & Balance)</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Your Simulated Email</label>
+                    <input type="email" id="userSimEmail" value="buyer@gmail.com" placeholder="buyer@gmail.com" oninput="loadUserPanelData()">
+                </div>
+                <div class="input-group">
+                    <label>Current Balance (BDT)</label>
+                    <input type="text" id="userSimBalance" readonly style="color: #00ffcc; font-weight: bold;" value="0.00">
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-money-bill-wave"></i> Add Money / Deposit Request</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Select Payment Method</label>
+                    <select id="userDepositMethod">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Amount (BDT)</label>
+                    <input type="number" id="userDepositAmount" placeholder="500">
+                </div>
+                <div class="input-group">
+                    <label>Transaction ID / Sender Number</label>
+                    <input type="text" id="userDepositTrx" placeholder="TrxID e.g. 9N876543">
+                </div>
+            </div>
+            <button class="admin-btn" style="width: auto;" onclick="submitUserDeposit()">Submit Deposit Request</button>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-history"></i> My Deposit History & Status</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Amount</th>
+                        <th>TrxID</th>
+                        <th>Status / Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="userDepositHistoryBody">
+                    <tr><td colspan="4" style="text-align: center; color: #777;">No deposit history yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDCIMosLNehv92LBKawC-53ErJ13QhnJy0",
-            authDomain: "mywebsite-709e3.firebaseapp.com",
-            databaseURL: "https://mywebsite-709e3-default-rtdb.firebaseio.com",
-            projectId: "mywebsite-709e3",
-            storageBucket: "mywebsite-709e3.firebasestorage.app",
-            messagingSenderId: "218299688364",
-            appId: "1:218299688364:web:bf48e2c069fd7d3702c609",
-            measurementId: "G-5MSD1CCSVY"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
         const ADMIN_USER = "Snriyan340@gmail.com";
         const ADMIN_PASS = "HABIBI@RAJU143";
 
         window.onload = function() {
             if(sessionStorage.getItem('adminLoggedIn') === 'true') {
                 showDashboard();
+            } else {
+                switchToUserPanel(); 
             }
+            loadAllData();
         };
+
+        function togglePasswordVisibility() {
+            let passInput = document.getElementById('adminPassInput');
+            let eyeIcon = document.getElementById('eyeIcon');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                eyeIcon.className = "fa-solid fa-eye-slash";
+            } else {
+                passInput.type = "password";
+                eyeIcon.className = "fa-solid fa-eye";
+            }
+        }
 
         function verifyAdminLogin() {
             let email = document.getElementById('adminEmailInput').value.trim();
@@ -254,143 +507,78 @@
             document.getElementById('adminLoginView').style.display = 'none';
             document.getElementById('adminNavbar').style.display = 'flex';
             document.getElementById('adminDashboardContainer').style.display = 'block';
+            document.getElementById('userWebsiteContainer').style.display = 'none';
             loadAllData();
         }
 
         function adminLogout() {
             sessionStorage.removeItem('adminLoggedIn');
-            location.reload();
+            document.getElementById('adminLoginView').style.display = 'flex';
+            document.getElementById('adminNavbar').style.display = 'none';
+            document.getElementById('adminDashboardContainer').style.display = 'none';
+        }
+
+        function switchToUserPanel() {
+            document.getElementById('adminLoginView').style.display = 'none';
+            document.getElementById('adminNavbar').style.display = 'none';
+            document.getElementById('adminDashboardContainer').style.display = 'none';
+            document.getElementById('userWebsiteContainer').style.display = 'block';
+            loadUserPanelData();
+        }
+
+        function switchToAdminPanel() {
+            if(sessionStorage.getItem('adminLoggedIn') === 'true') {
+                showDashboard();
+            } else {
+                document.getElementById('adminLoginView').style.display = 'flex';
+                document.getElementById('userWebsiteContainer').style.display = 'none';
+            }
         }
 
         function loadAllData() {
             loadCategories();
             loadPaymentMethods();
             loadAdminDeposits();
-            loadAdminSupport();
         }
 
-        function loadAdminDeposits() {
-            db.collection('deposits').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                let tbody = document.getElementById('adminDepositTableBody');
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#777;">No deposits found.</td></tr>`;
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    let dep = doc.data();
-                    let id = doc.id;
-                    let statusBadge = dep.status === 'Pending' ? `<span class="badge-pending">Pending</span>` : (dep.status === 'Approved' ? `<span class="badge-approved">Approved</span>` : `<span class="badge-rejected">Rejected: ${dep.reason}</span>`);
-                    let actionBtns = dep.status === 'Pending' ? `
-                        <button class="btn-success" onclick="approveDeposit('${id}', '${dep.email}', ${dep.amount})">Approve</button>
-                        <button class="btn-danger" onclick="rejectDeposit('${id}')">Reject</button>
-                    ` : `<span style="color:#777; font-size:11px;">Done</span>`;
-
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td><b>${dep.name || 'N/A'}</b><br><span style="font-size:11px; color:#888;">${dep.email}</span></td>
-                            <td>${dep.method}</td>
-                            <td>${dep.amount} BDT</td>
-                            <td>${dep.trx}</td>
-                            <td>${statusBadge}</td>
-                            <td><div class="action-btns">${actionBtns}</div></td>
-                        </tr>
-                    `);
-                });
-            });
-        }
-
-        function loadAdminSupport() {
-            db.collection('supports').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                let tbody = document.getElementById('adminSupportTableBody');
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">No support tickets.</td></tr>`;
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    let sup = doc.data();
-                    let id = doc.id;
-                    let statusBadge = sup.status === 'Resolved' ? `<span class="badge-approved">Resolved</span>` : `<span class="badge-pending">Pending</span>`;
-                    let replyAction = `
-                        <button class="btn-success" onclick="replySupport('${id}')">Reply</button>
-                        <button class="btn-danger" onclick="deleteSupport('${id}')">Delete</button>
-                    `;
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td><b>${sup.name || 'N/A'}</b><br><span style="font-size:11px; color:#888;">${sup.email}</span></td>
-                            <td>${sup.message}<br><small style="color:#00ffcc;">Reply: ${sup.reply || 'None'}</small></td>
-                            <td>${statusBadge}</td>
-                            <td><div class="action-btns">${replyAction}</div></td>
-                        </tr>
-                    `);
-                });
-            });
-        }
-
-        function replySupport(id) {
-            let replyMsg = prompt("Type your reply for the user:");
-            if(replyMsg === null) return;
-            db.collection('supports').doc(id).update({
-                reply: replyMsg,
-                status: 'Resolved'
-            }).then(() => {
-                alert('Reply sent successfully!');
-            });
-        }
-
-        function deleteSupport(id) {
-            db.collection('supports').doc(id).delete();
-        }
-
-        function approveDeposit(id, email, amount) {
-            let userRef = db.collection('users').doc(email);
-            let depositRef = db.collection('deposits').doc(id);
-
-            db.runTransaction(transaction => {
-                return transaction.get(userRef).then(doc => {
-                    let currentBal = doc.exists ? (doc.data().balance || 0) : 0;
-                    let newBal = currentBal + amount;
-                    transaction.set(userRef, { balance: newBal }, { merge: true });
-                    transaction.update(depositRef, { status: 'Approved' });
-                });
-            }).then(() => {
-                alert(`Approved! ${amount} BDT added to ${email}`);
-            });
-        }
-
-        function rejectDeposit(id) {
-            let reason = prompt("Enter rejection reason:", "Wrong TrxID");
-            if(reason === null) return;
-            db.collection('deposits').doc(id).update({ status: 'Rejected', reason });
-        }
-
+        // --- CATEGORIES ---
         function loadCategories() {
-            db.collection('categories').onSnapshot(snapshot => {
-                let tbody = document.getElementById('categoryTableBody');
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">No categories added.</td></tr>`;
-                    return;
+            let categories = JSON.parse(localStorage.getItem('apex_categories')) || [];
+            let tbody = document.getElementById('categoryTableBody');
+            let selectDrop = document.getElementById('stockCategorySelect');
+            
+            tbody.innerHTML = '';
+            selectDrop.innerHTML = '';
+
+            if (categories.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">No categories added.</td></tr>`;
+                selectDrop.innerHTML = `<option value="">No categories available</option>`;
+                return;
+            }
+
+            categories.forEach((item, index) => {
+                let row = `
+                    <tr>
+                        <td>${item.cat}</td>
+                        <td>${item.subCat}</td>
+                        <td style="color:#aaa; font-size:12px;">${item.description || 'N/A'}</td>
+                        <td><span class="${item.status === 'ON' ? 'badge-on' : 'badge-off'}">${item.status}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-success" style="padding:3px 8px;" onclick="toggleStatus(${index})">Toggle</button>
+                                <button class="btn-danger" onclick="deleteCategory(${index})">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+
+                if (item.status === 'ON') {
+                    let opt = document.createElement('option');
+                    opt.value = `${item.cat} - ${item.subCat}`;
+                    opt.innerText = `${item.cat} - ${item.subCat}`;
+                    selectDrop.appendChild(opt);
                 }
-                snapshot.forEach(doc => {
-                    let item = doc.data();
-                    let id = doc.id;
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${item.cat}</td>
-                            <td>${item.subCat}</td>
-                            <td style="color:#aaa;">${item.description || 'N/A'}</td>
-                            <td><span class="${item.status === 'ON' ? 'badge-on' : 'badge-off'}">${item.status}</span></td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="btn-success" onclick="db.collection('categories').doc('${id}').update({status: '${item.status === 'ON' ? 'OFF' : 'ON'}'})">Toggle</button>
-                                    <button class="btn-danger" onclick="db.collection('categories').doc('${id}').delete()">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `);
-                });
             });
         }
 
@@ -398,35 +586,75 @@
             let cat = document.getElementById('newCatName').value.trim();
             let subCat = document.getElementById('newSubCatName').value.trim();
             let desc = document.getElementById('newCatDesc').value.trim();
+
             if(!cat || !subCat) { alert('Enter Category & Sub-Category!'); return; }
-            db.collection('categories').add({ cat, subCat, description: desc, status: "ON" }).then(() => {
-                document.getElementById('newCatName').value = '';
-                document.getElementById('newSubCatName').value = '';
-                document.getElementById('newCatDesc').value = '';
-                alert('Category added successfully!');
-            });
+
+            let categories = JSON.parse(localStorage.getItem('apex_categories')) || [];
+            categories.push({ cat, subCat, description: desc, status: "ON" });
+            localStorage.setItem('apex_categories', JSON.stringify(categories));
+
+            document.getElementById('newCatName').value = '';
+            document.getElementById('newSubCatName').value = '';
+            document.getElementById('newCatDesc').value = '';
+            loadCategories();
+            alert('Category added successfully!');
         }
 
+        function toggleStatus(index) {
+            let categories = JSON.parse(localStorage.getItem('apex_categories')) || [];
+            categories[index].status = categories[index].status === 'ON' ? 'OFF' : 'ON';
+            localStorage.setItem('apex_categories', JSON.stringify(categories));
+            loadCategories();
+        }
+
+        function deleteCategory(index) {
+            let categories = JSON.parse(localStorage.getItem('apex_categories')) || [];
+            categories.splice(index, 1);
+            localStorage.setItem('apex_categories', JSON.stringify(categories));
+            loadCategories();
+        }
+
+        // --- STOCK ---
+        function uploadStockAccounts() {
+            let selectedCat = document.getElementById('stockCategorySelect').value;
+            let price = document.getElementById('stockItemPrice').value;
+            let accountsText = document.getElementById('stockAccountsInput').value.trim();
+
+            if(!selectedCat) { alert('Select a valid category!'); return; }
+            if(!accountsText) { alert('Enter account credentials!'); return; }
+
+            let accountsArray = accountsText.split('\n').filter(line => line.trim() !== '');
+            let stocks = JSON.parse(localStorage.getItem('apex_stocks')) || [];
+
+            accountsArray.forEach(account => {
+                stocks.push({ category: selectedCat, price, accountDetails: account, status: 'available' });
+            });
+
+            localStorage.setItem('apex_stocks', JSON.stringify(stocks));
+            document.getElementById('stockAccountsInput').value = '';
+            alert(`Uploaded ${accountsArray.length} accounts to stock!`);
+        }
+
+        // --- PAYMENT METHODS ---
         function loadPaymentMethods() {
-            db.collection('payments').onSnapshot(snapshot => {
-                let tbody = document.getElementById('paymentMethodTableBody');
-                tbody.innerHTML = '';
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">No payment methods.</td></tr>`;
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    let item = doc.data();
-                    let id = doc.id;
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>${item.num}</td>
-                            <td>${item.type}</td>
-                            <td><button class="btn-danger" onclick="db.collection('payments').doc('${id}').delete()">Remove</button></td>
-                        </tr>
-                    `);
-                });
+            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
+            let tbody = document.getElementById('paymentMethodTableBody');
+            tbody.innerHTML = '';
+
+            if (methods.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">No payment methods.</td></tr>`;
+                return;
+            }
+
+            methods.forEach((item, index) => {
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.num}</td>
+                        <td>${item.type}</td>
+                        <td><button class="btn-danger" onclick="deletePayment(${index})">Remove</button></td>
+                    </tr>
+                `);
             });
         }
 
@@ -434,33 +662,193 @@
             let name = document.getElementById('payMethodName').value.trim();
             let num = document.getElementById('payMethodNumber').value.trim();
             let type = document.getElementById('payMethodType').value;
+
             if(!name || !num) { alert('Fill all fields!'); return; }
-            db.collection('payments').add({ name, num, type }).then(() => {
-                document.getElementById('payMethodName').value = '';
-                document.getElementById('payMethodNumber').value = '';
-                alert('Payment method added!');
-            });
+
+            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
+            methods.push({ name, num, type });
+            localStorage.setItem('apex_payments', JSON.stringify(methods));
+
+            document.getElementById('payMethodName').value = '';
+            document.getElementById('payMethodNumber').value = '';
+            loadPaymentMethods();
+            alert('Payment method added!');
         }
 
+        function deletePayment(index) {
+            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
+            methods.splice(index, 1);
+            localStorage.setItem('apex_payments', JSON.stringify(methods));
+            loadPaymentMethods();
+        }
+
+        // --- USER BALANCE MANAGEMENT ---
         function updateUserBalanceAdmin() {
             let email = document.getElementById('manageUserEmail').value.trim();
             let action = document.getElementById('manageActionType').value;
             let amount = parseFloat(document.getElementById('manageAmount').value);
-            if(!email || isNaN(amount) || amount <= 0) { alert('Valid email & amount required!'); return; }
+
+            if(!email || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid email and amount!');
+                return;
+            }
+
+            let usersBalances = JSON.parse(localStorage.getItem('apex_user_balances')) || {};
+            let currentBal = usersBalances[email] || 0;
+
+            if(action === 'add') {
+                usersBalances[email] = currentBal + amount;
+            } else {
+                if(currentBal < amount) {
+                    alert('User does not have enough balance to deduct this amount!');
+                    return;
+                }
+                usersBalances[email] = currentBal - amount;
+            }
+
+            localStorage.setItem('apex_user_balances', JSON.stringify(usersBalances));
+            alert(`Successfully updated balance for ${email}. New Balance: ${usersBalances[email]} BDT`);
+            document.getElementById('manageUserEmail').value = '';
+            document.getElementById('manageAmount').value = '';
+        }
+
+        // --- DEPOSIT CONTROL (ADMIN & USER) ---
+        function submitUserDeposit() {
+            let email = document.getElementById('userSimEmail').value.trim();
+            let method = document.getElementById('userDepositMethod').value;
+            let amount = parseFloat(document.getElementById('userDepositAmount').value);
+            let trx = document.getElementById('userDepositTrx').value.trim();
+
+            if(!email || !method || isNaN(amount) || !trx) {
+                alert('Please fill out all deposit fields!');
+                return;
+            }
+
+            let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
+            deposits.push({
+                id: Date.now(),
+                email,
+                method,
+                amount,
+                trx,
+                status: 'Pending',
+                reason: ''
+            });
+
+            localStorage.setItem('apex_deposits', JSON.stringify(deposits));
+            document.getElementById('userDepositAmount').value = '';
+            document.getElementById('userDepositTrx').value = '';
+            loadUserPanelData();
+            alert('Deposit request submitted successfully! Pending admin approval.');
+        }
+
+        function loadAdminDeposits() {
+            let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
+            let tbody = document.getElementById('adminDepositTableBody');
+            tbody.innerHTML = '';
+
+            if (deposits.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#777;">No pending or past deposits.</td></tr>`;
+                return;
+            }
+
+            deposits.forEach((dep, index) => {
+                let statusBadge = '';
+                if(dep.status === 'Pending') statusBadge = `<span class="badge-pending">Pending</span>`;
+                else if(dep.status === 'Approved') statusBadge = `<span class="badge-approved">Approved</span>`;
+                else statusBadge = `<span class="badge-rejected">Rejected: ${dep.reason}</span>`;
+
+                let actionBtns = dep.status === 'Pending' ? `
+                    <button class="btn-success" onclick="approveDeposit(${index})">Approve</button>
+                    <button class="btn-danger" onclick="rejectDeposit(${index})">Reject</button>
+                ` : `<span style="color:#777; font-size:11px;">Completed</span>`;
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${dep.email}</td>
+                        <td>${dep.method}</td>
+                        <td>${dep.amount} BDT</td>
+                        <td>${dep.trx}</td>
+                        <td>${statusBadge}</td>
+                        <td><div class="action-btns">${actionBtns}</div></td>
+                    </tr>
+                `);
+            });
+        }
+
+        function approveDeposit(index) {
+            let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
+            let dep = deposits[index];
+
+            // Add amount to user balance
+            let usersBalances = JSON.parse(localStorage.getItem('apex_user_balances')) || {};
+            usersBalances[dep.email] = (usersBalances[dep.email] || 0) + dep.amount;
+            localStorage.setItem('apex_user_balances', JSON.stringify(usersBalances));
+
+            dep.status = 'Approved';
+            localStorage.setItem('apex_deposits', JSON.stringify(deposits));
+            loadAdminDeposits();
+            alert(`Deposit approved! Added ${dep.amount} BDT to ${dep.email}`);
+        }
+
+        function rejectDeposit(index) {
+            let reason = prompt("Enter rejection reason:");
+            if (reason === null) return;
+
+            let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
+            deposits[index].status = 'Rejected';
+            deposits[index].reason = reason || 'No reason provided';
+            localStorage.setItem('apex_deposits', JSON.stringify(deposits));
+            loadAdminDeposits();
+        }
+
+        function loadUserPanelData() {
+            let email = document.getElementById('userSimEmail').value.trim();
+            let usersBalances = JSON.parse(localStorage.getItem('apex_user_balances')) || {};
+            let currentBal = usersBalances[email] || 0;
+            document.getElementById('userSimBalance').value = currentBal.toFixed(2) + ' BDT';
+
+            // Load deposit payment methods for user view
+            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
+            let methodSelect = document.getElementById('userDepositMethod');
+            methodSelect.innerHTML = '';
             
-            let userRef = db.collection('users').doc(email);
-            db.runTransaction(transaction => {
-                return transaction.get(userRef).then(doc => {
-                    let currentBal = doc.exists ? (doc.data().balance || 0) : 0;
-                    let newBal = action === 'add' ? currentBal + amount : currentBal - amount;
-                    if(newBal < 0) throw "Insufficient balance!";
-                    transaction.set(userRef, { balance: newBal }, { merge: true });
-                    return newBal;
+            if (methods.length === 0) {
+                methodSelect.innerHTML = `<option value="">No payment methods available</option>`;
+            } else {
+                methods.forEach(m => {
+                    let opt = document.createElement('option');
+                    opt.value = `${m.name} (${m.num})`;
+                    opt.innerText = `${m.name}: ${m.num} (${m.type})`;
+                    methodSelect.appendChild(opt);
                 });
-            }).then(newBal => {
-                alert(`Updated balance for ${email}. New Balance: ${newBal} BDT`);
-            }).catch(err => {
-                alert('Error: ' + err);
+            }
+
+            // Load user deposit history
+            let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
+            let userDeposits = deposits.filter(d => d.email === email);
+            let historyBody = document.getElementById('userDepositHistoryBody');
+            historyBody.innerHTML = '';
+
+            if (userDeposits.length === 0) {
+                historyBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #777;">No deposit history yet.</td></tr>`;
+                return;
+            }
+
+            userDeposits.forEach(dep => {
+                let statusBadge = '';
+                if(dep.status === 'Pending') statusBadge = `<span class="badge-pending">Pending</span>`;
+                else if(dep.status === 'Approved') statusBadge = `<span class="badge-approved">Approved</span>`;
+                else statusBadge = `<span class="badge-rejected">Rejected: ${dep.reason}</span>`;
+
+                historyBody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${dep.method}</td>
+                        <td>${dep.amount} BDT</td>
+                        <td>${dep.trx}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `);
             });
         }
     </script>
