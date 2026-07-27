@@ -418,7 +418,7 @@
             <div class="form-grid">
                 <div class="input-group">
                     <label>Your Simulated Email</label>
-                    <input type="email" id="userSimEmail" value="buyer@gmail.com" placeholder="buyer@gmail.com" oninput="loadUserPanelData()">
+                    <input type="email" id="userSimEmail" value="buyer@gmail.com" placeholder="buyer@gmail.com">
                 </div>
                 <div class="input-group">
                     <label>Current Balance (BDT)</label>
@@ -474,7 +474,7 @@
             if(sessionStorage.getItem('adminLoggedIn') === 'true') {
                 showDashboard();
             } else {
-                switchToUserPanel(); 
+                switchToUserPanel(); // Default user view or login view
             }
             loadAllData();
         };
@@ -786,60 +786,63 @@
             localStorage.setItem('apex_user_balances', JSON.stringify(usersBalances));
 
             dep.status = 'Approved';
+            deposits[index] = dep;
             localStorage.setItem('apex_deposits', JSON.stringify(deposits));
             loadAdminDeposits();
-            alert(`Deposit approved! Added ${dep.amount} BDT to ${dep.email}`);
+            alert(`Deposit approved! ${dep.amount} BDT added to ${dep.email}`);
         }
 
         function rejectDeposit(index) {
-            let reason = prompt("Enter rejection reason:");
-            if (reason === null) return;
+            let reason = prompt("Enter the reason for rejecting this deposit:", "Wrong Transaction ID or Amount mismatch");
+            if(reason === null) return; // Cancelled
 
             let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
             deposits[index].status = 'Rejected';
-            deposits[index].reason = reason || 'No reason provided';
+            deposits[index].reason = reason || 'Not specified';
+            
             localStorage.setItem('apex_deposits', JSON.stringify(deposits));
             loadAdminDeposits();
+            alert('Deposit rejected with reason.');
         }
 
         function loadUserPanelData() {
             let email = document.getElementById('userSimEmail').value.trim();
-            let usersBalances = JSON.parse(localStorage.getItem('apex_user_balances')) || {};
-            let currentBal = usersBalances[email] || 0;
-            document.getElementById('userSimBalance').value = currentBal.toFixed(2) + ' BDT';
-
-            // Load deposit payment methods for user view
-            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
-            let methodSelect = document.getElementById('userDepositMethod');
-            methodSelect.innerHTML = '';
             
-            if (methods.length === 0) {
-                methodSelect.innerHTML = `<option value="">No payment methods available</option>`;
+            // Load user balance
+            let usersBalances = JSON.parse(localStorage.getItem('apex_user_balances')) || {};
+            document.getElementById('userSimBalance').value = (usersBalances[email] || 0).toFixed(2);
+
+            // Load payment methods into dropdown
+            let methods = JSON.parse(localStorage.getItem('apex_payments')) || [];
+            let methodDrop = document.getElementById('userDepositMethod');
+            methodDrop.innerHTML = '';
+            if(methods.length === 0) {
+                methodDrop.innerHTML = `<option value="">No payment methods active</option>`;
             } else {
                 methods.forEach(m => {
                     let opt = document.createElement('option');
                     opt.value = `${m.name} (${m.num})`;
-                    opt.innerText = `${m.name}: ${m.num} (${m.type})`;
-                    methodSelect.appendChild(opt);
+                    opt.innerText = `${m.name} - ${m.num} (${m.type})`;
+                    methodDrop.appendChild(opt);
                 });
             }
 
-            // Load user deposit history
+            // Load user's own deposit history
             let deposits = JSON.parse(localStorage.getItem('apex_deposits')) || [];
-            let userDeposits = deposits.filter(d => d.email === email);
+            let myDeposits = deposits.filter(d => d.email === email);
             let historyBody = document.getElementById('userDepositHistoryBody');
             historyBody.innerHTML = '';
 
-            if (userDeposits.length === 0) {
+            if(myDeposits.length === 0) {
                 historyBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #777;">No deposit history yet.</td></tr>`;
                 return;
             }
 
-            userDeposits.forEach(dep => {
+            myDeposits.forEach(dep => {
                 let statusBadge = '';
                 if(dep.status === 'Pending') statusBadge = `<span class="badge-pending">Pending</span>`;
-                else if(dep.status === 'Approved') statusBadge = `<span class="badge-approved">Approved</span>`;
-                else statusBadge = `<span class="badge-rejected">Rejected: ${dep.reason}</span>`;
+                else if(dep.status === 'Approved') statusBadge = `<span class="badge-approved">Approved (+${dep.amount} BDT)</span>`;
+                else statusBadge = `<span class="badge-rejected">Rejected (Reason: ${dep.reason})</span>`;
 
                 historyBody.insertAdjacentHTML('beforeend', `
                     <tr>
