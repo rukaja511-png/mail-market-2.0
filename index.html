@@ -1,318 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ApexStore - User Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-[#0b0b0b] text-[#e5e5e5] font-sans pb-12">
+let qty = parseInt(input.value) || 1;
+        if(qty > maxStock) qty = maxStock;
+        if(qty < 1) qty = 1;
+        input.value = qty;
+        document.getElementById('modal-total-price').innerText = '৳' + (unitPrice * qty).toFixed(2);
+    }
 
-    <!-- Navigation Bar -->
-    <nav class="bg-[#141414] border-b border-[#222] shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-store text-xl text-[#00ffcc]"></i>
-                <span class="text-lg font-bold text-[#00ffcc]">ApexStore User Panel</span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div class="bg-[#1a1a1a] border border-[#333] px-3 py-1.5 rounded-lg text-sm font-semibold">
-                    Balance: <span id="userBalance" class="text-[#00ffcc]">0.00</span> BDT
-                </div>
-                <button onclick="openDepositModal()" class="bg-[#00ffcc] hover:bg-[#00cc99] text-black px-3 py-1.5 rounded-lg text-sm font-semibold transition">
-                    <i class="fa-solid fa-wallet mr-1"></i> Deposit
-                </button>
-            </div>
-        </div>
-    </nav>
+    function confirmPurchase(cat, index) {
+        let qty = parseInt(document.getElementById('modal-qty-input').value) || 1;
+        let store = JSON.parse(localStorage.getItem('app_store_data')) || {};
+        let item = store[cat][index];
+        let totalCost = Number(item.price) * qty;
 
-    <!-- Main Container -->
-    <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-        
-        <!-- Sidebar Menu -->
-        <div class="bg-[#141414] border border-[#262626] p-4 rounded-xl shadow-sm h-fit">
-            <h3 class="font-bold text-[#00ffcc] mb-3 border-b border-[#222] pb-2 text-sm">Navigation</h3>
-            <ul class="space-y-2 text-sm">
-                <li><a href="#" onclick="switchTab('shop')" id="navShop" class="block p-2 rounded-lg bg-[rgba(0,255,204,0.1)] text-[#00ffcc] border border-[#00ffcc] font-medium"><i class="fa-solid fa-cart-shopping mr-2"></i> Shop (Buy Accounts)</a></li>
-                <li><a href="#" onclick="switchTab('orders')" id="navOrders" class="block p-2 rounded-lg text-gray-400 hover:bg-[#1a1a1a]"><i class="fa-solid fa-clock-rotate-left mr-2"></i> My Purchases</a></li>
-                <li><a href="#" onclick="switchTab('support')" id="navSupport" class="block p-2 rounded-lg text-gray-400 hover:bg-[#1a1a1a]"><i class="fa-solid fa-headset mr-2"></i> Support Center</a></li>
-            </ul>
-        </div>
-
-        <!-- Content Area -->
-        <div class="md:col-span-3 space-y-6">
-            
-            <!-- Shop Section -->
-            <div id="shopTab" class="space-y-4">
-                <h2 class="text-base font-bold text-[#00ffcc] border-b border-[#222] pb-2">Available Accounts Stock</h2>
-                <div id="stockListContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <p class="text-gray-500">No stock available right now.</p>
-                </div>
-            </div>
-
-            <!-- Orders Section -->
-            <div id="ordersTab" class="hidden space-y-4">
-                <h2 class="text-base font-bold text-[#00ffcc] border-b border-[#222] pb-2">My Purchase History</h2>
-                <div class="bg-[#141414] border border-[#262626] rounded-xl shadow-sm p-4 overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="border-b border-[#222] text-[#00ffcc]">
-                                <th class="p-2">Category</th>
-                                <th class="p-2">Account Details (email|pass)</th>
-                                <th class="p-2">Price Paid</th>
-                                <th class="p-2">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTableBody" class="text-gray-300">
-                            <tr><td colspan="4" class="p-3 text-gray-500 text-center">No purchases yet.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Support Section -->
-            <div id="supportTab" class="hidden bg-[#141414] border border-[#262626] p-6 rounded-xl shadow-sm space-y-4">
-                <h2 class="text-base font-bold text-[#00ffcc] border-b border-[#222] pb-2">Support Center</h2>
-                <p class="text-gray-400 text-sm">If you face any issues, feel free to contact us:</p>
-                <div class="flex flex-wrap gap-4">
-                    <a id="telegramLink" href="#" target="_blank" class="bg-[rgba(0,255,204,0.1)] border border-[#00ffcc] text-[#00ffcc] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#00ffcc] hover:text-black transition"><i class="fa-brands fa-telegram mr-1"></i> Telegram Support</a>
-                    <div class="bg-[#1a1a1a] border border-[#333] px-4 py-2 rounded-lg text-sm font-semibold text-gray-300">Hotline: <span id="hotlineNum" class="text-[#00ffcc]">018XXXXXXXX</span></div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Deposit Modal -->
-    <div id="depositModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center px-4">
-        <div class="bg-[#141414] border border-[#00ffcc] rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <div class="flex justify-between items-center border-b border-[#222] pb-2">
-                <h3 class="text-base font-bold text-[#00ffcc]">Add Money / Deposit Request</h3>
-                <button onclick="closeDepositModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div class="space-y-3 text-sm">
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Select Payment Method</label>
-                    <select id="depositMethod" class="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2 text-white focus:border-[#00ffcc] outline-none">
-                        <!-- Dynamic payment methods -->
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Amount (BDT)</label>
-                    <input type="number" id="depositAmount" placeholder="e.g. 500" class="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2 text-white focus:border-[#00ffcc] outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1">Transaction ID / Sender Number</label>
-                    <input type="text" id="depositTrxID" placeholder="e.g. 9N876543" class="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2 text-white focus:border-[#00ffcc] outline-none">
-                </div>
-                <button onclick="submitDeposit()" class="w-full bg-[#00ffcc] hover:bg-[#00cc99] text-black py-2.5 rounded-lg font-bold transition">Submit Deposit Request</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        let currentUser = "buyer@gmail.com"; // User simulator email
-
-        function loadUserData() {
-            let balances = JSON.parse(localStorage.getItem("apex_user_balances")) || {};
-            if (balances[currentUser] === undefined) {
-                balances[currentUser] = 0;
-                localStorage.setItem("apex_user_balances", JSON.stringify(balances));
-            }
-            document.getElementById("userBalance").innerText = balances[currentUser].toFixed(2);
+        updateUserBalanceDisplay();
+        if(currentUser.balance < totalCost) {
+            return showCustomAlert('Insufficient balance! Please deposit funds first.');
         }
 
-        function loadStocksAndCategories() {
-            let categories = JSON.parse(localStorage.getItem("apex_categories")) || [];
-            let stocks = JSON.parse(localStorage.getItem("apex_stocks")) || [];
-            let container = document.getElementById("stockListContainer");
-            container.innerHTML = "";
+        if(!item.mails || item.mails.length < qty) {
+            return showCustomAlert('Not enough stock available!');
+        }
 
-            let activeCats = categories.filter(c => c.status === 'ON');
+        // Deduct mails from stock
+        let purchasedMails = item.mails.splice(0, qty);
+        store[cat][index] = item;
+        localStorage.setItem('app_store_data', JSON.stringify(store));
 
-            if (activeCats.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 col-span-2">No active categories available.</p>`;
-                return;
-            }
+        // Deduct balance
+        currentUser.balance -= totalCost;
+        
+        // Record purchase history
+        let purchaseRecord = {
+            id: 'TXN-' + Math.floor(100000 + Math.random() * 900000),
+            type: 'Purchase',
+            title: item.title,
+            qty: qty,
+            amount: totalCost,
+            mails: purchasedMails,
+            date: new Date().toLocaleString()
+        };
 
-            activeCats.forEach(catItem => {
-                let catFullName = `${catItem.cat} - ${catItem.subCat}`;
-                let availableStock = stocks.filter(s => s.category === catFullName && s.status === 'available');
-                let price = availableStock.length > 0 ? availableStock[0].price : 0.00;
+        if(!currentUser.history) currentUser.history = [];
+        currentUser.history.unshift(purchaseRecord);
 
+        // Update database user array
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let uIndex = users.findIndex(u => u.email === currentUser.email);
+        if(uIndex !== -1) {
+            users[uIndex] = currentUser;
+            localStorage.setItem('app_users', JSON.stringify(users));
+        }
+        localStorage.setItem('app_current_user', JSON.stringify(currentUser));
+
+        // Close modal and refresh UI
+        let modalEl = document.getElementById('buyModal');
+        let modalInstance = bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
+
+        updateUserBalanceDisplay();
+        loadStoreCategories();
+        showCustomAlert(`Purchase successful! ${qty} item(s) acquired.`);
+    }
+
+    function loadPaymentMethods() {
+        let paymentSettings = JSON.parse(localStorage.getItem('app_payment_methods')) || {
+            bkash: { name: 'bKash', num: '01700000000', active: true },
+            nagad: { name: 'Nagad', num: '01800000000', active: true },
+            rocket: { name: 'Rocket', num: '01900000000', active: true }
+        };
+
+        let container = document.getElementById('mfs-cards-container');
+        container.innerHTML = '';
+        let hasActive = false;
+
+        for (let key in paymentSettings) {
+            let mfs = paymentSettings[key];
+            if (mfs && mfs.active && mfs.num) {
+                hasActive = true;
+                let isSelectedClass = chosenMFSName === mfs.name ? 'selected' : '';
                 container.innerHTML += `
-                    <div class="bg-[#141414] border border-[#262626] rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                        <div>
-                            <span class="bg-[rgba(0,255,204,0.1)] text-[#00ffcc] border border-[#00ffcc] px-2 py-0.5 rounded text-xs font-bold inline-block mb-2">${catItem.cat}</span>
-                            <h4 class="font-bold text-white text-base mb-1">${catItem.subCat}</h4>
-                            <p class="text-xs text-gray-400 mb-3">${catItem.description || 'No description provided.'}</p>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-3 text-xs">
-                                <span class="text-[#00ffcc] font-semibold">Stock: ${availableStock.length}</span>
-                                <span class="text-white font-bold">৳ ${price}</span>
-                            </div>
-                            <button class="w-full py-2 rounded-lg text-xs font-bold transition ${availableStock.length > 0 ? 'bg-[#00ffcc] text-black hover:bg-[#00cc99]' : 'bg-[#222] text-gray-500 cursor-not-allowed'}" ${availableStock.length === 0 ? 'disabled' : ''} onclick="buyProduct('${catFullName}')">
-                                ${availableStock.length > 0 ? 'Buy Now' : 'Out of Stock'}
-                            </button>
+                    <div class="col-4">
+                        <div class="mfs-card ${isSelectedClass}" onclick="selectMFS('${mfs.name}', '${mfs.num}')">
+                            ${BRAND_MFS_LOGOS[key] || `<div class="mfs-badge-custom bg-secondary">${mfs.name}</div>`}
+                            <span class="small text-sub mt-2 d-block" style="font-size:11px;">Personal</span>
                         </div>
                     </div>
                 `;
-            });
-        }
-
-        function loadPaymentMethods() {
-            let methods = JSON.parse(localStorage.getItem("apex_payments")) || [];
-            let select = document.getElementById("depositMethod");
-            select.innerHTML = "";
-
-            if (methods.length === 0) {
-                select.innerHTML = `<option value="">No payment methods available</option>`;
-                return;
-            }
-
-            methods.forEach(m => {
-                select.innerHTML += `<option value="${m.name} (${m.num}) - ${m.type}">${m.name}: ${m.num} (${m.type})</option>`;
-            });
-        }
-
-        function openDepositModal() {
-            loadPaymentMethods();
-            document.getElementById("depositModal").classList.remove("hidden");
-        }
-        function closeDepositModal() { document.getElementById("depositModal").classList.add("hidden"); }
-
-        function submitDeposit() {
-            let method = document.getElementById("depositMethod").value;
-            let amount = parseFloat(document.getElementById("depositAmount").value);
-            let trxID = document.getElementById("depositTrxID").value.trim();
-
-            if (!method || isNaN(amount) || amount <= 0 || !trxID) {
-                alert("Please fill out all deposit fields correctly!");
-                return;
-            }
-
-            let deposits = JSON.parse(localStorage.getItem("apex_deposits")) || [];
-            deposits.push({
-                id: Date.now(),
-                email: currentUser,
-                method: method,
-                amount: amount,
-                trx: trxID,
-                status: "Pending",
-                reason: ""
-            });
-
-            localStorage.setItem("apex_deposits", JSON.stringify(deposits));
-            alert("Deposit request submitted successfully! Pending admin approval.");
-            closeDepositModal();
-            
-            document.getElementById("depositAmount").value = "";
-            document.getElementById("depositTrxID").value = "";
-        }
-
-        function buyProduct(categoryName) {
-            let stocks = JSON.parse(localStorage.getItem("apex_stocks")) || [];
-            let balances = JSON.parse(localStorage.getItem("apex_user_balances")) || {};
-            
-            let stockIndex = stocks.findIndex(s => s.category === categoryName && s.status === 'available');
-            if (stockIndex === -1) {
-                alert("Sorry, this item is out of stock!");
-                return;
-            }
-
-            let stockItem = stocks[stockIndex];
-            let price = parseFloat(stockItem.price);
-
-            if ((balances[currentUser] || 0) < price) {
-                alert("Insufficient balance! Please add funds to your account first.");
-                return;
-            }
-
-            balances[currentUser] -= price;
-            localStorage.setItem("apex_user_balances", JSON.stringify(balances));
-
-            stocks[stockIndex].status = 'sold';
-            localStorage.setItem("apex_stocks", JSON.stringify(stocks));
-
-            let purchases = JSON.parse(localStorage.getItem("apex_purchases")) || [];
-            purchases.push({
-                email: currentUser,
-                category: categoryName,
-                accountDetails: stockItem.accountDetails,
-                price: price,
-                date: new Date().toLocaleString()
-            });
-            localStorage.setItem("apex_purchases", JSON.stringify(purchases));
-
-            loadUserData();
-            loadStocksAndCategories();
-            loadOrders();
-            alert(`Purchase successful!\nAccount Details: ${stockItem.accountDetails}`);
-        }
-
-        function loadOrders() {
-            let purchases = JSON.parse(localStorage.getItem("apex_purchases")) || [];
-            let tbody = document.getElementById("ordersTableBody");
-            tbody.innerHTML = "";
-
-            let userPurchases = purchases.filter(p => p.email === currentUser);
-            if (userPurchases.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-gray-500 text-center">No purchases yet.</td></tr>`;
-                return;
-            }
-
-            userPurchases.forEach(order => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-[#222]">
-                        <td class="p-2">${order.category}</td>
-                        <td class="p-2 font-mono text-[#00ffcc]">${order.accountDetails}</td>
-                        <td class="p-2 text-white font-medium">৳ ${order.price}</td>
-                        <td class="p-2 text-gray-400 text-xs">${order.date}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        function loadSupportInfo() {
-            let settings = JSON.parse(localStorage.getItem("apex_site_settings")) || { telegram: "@apexstore_support", supportNum: "018XXXXXXXX" };
-            document.getElementById("hotlineNum").innerText = settings.supportNum || "N/A";
-            let teleLink = document.getElementById("telegramLink");
-            let teleUser = settings.telegram || "apexstore_support";
-            teleLink.href = `https://t.me/${teleUser.replace('@','')}`;
-            teleLink.innerHTML = `<i class="fa-brands fa-telegram mr-1"></i> Telegram Support (${teleUser})`;
-        }
-
-        function switchTab(tabName) {
-            document.getElementById("shopTab").classList.add("hidden");
-            document.getElementById("ordersTab").classList.add("hidden");
-            document.getElementById("supportTab").classList.add("hidden");
-
-            document.getElementById("navShop").className = "block p-2 rounded-lg text-gray-400 hover:bg-[#1a1a1a]";
-            document.getElementById("navOrders").className = "block p-2 rounded-lg text-gray-400 hover:bg-[#1a1a1a]";
-            document.getElementById("navSupport").className = "block p-2 rounded-lg text-gray-400 hover:bg-[#1a1a1a]";
-
-            if (tabName === 'shop') {
-                document.getElementById("shopTab").classList.remove("hidden");
-                document.getElementById("navShop").className = "block p-2 rounded-lg bg-[rgba(0,255,204,0.1)] text-[#00ffcc] border border-[#00ffcc] font-medium";
-            } else if (tabName === 'orders') {
-                document.getElementById("ordersTab").classList.remove("hidden");
-                document.getElementById("navOrders").className = "block p-2 rounded-lg bg-[rgba(0,255,204,0.1)] text-[#00ffcc] border border-[#00ffcc] font-medium";
-                loadOrders();
-            } else if (tabName === 'support') {
-                document.getElementById("supportTab").classList.remove("hidden");
-                document.getElementById("navSupport").className = "block p-2 rounded-lg bg-[rgba(0,255,204,0.1)] text-[#00ffcc] border border-[#00ffcc] font-medium";
-                loadSupportInfo();
             }
         }
 
-        window.onload = function() {
-            loadUserData();
-            loadStocksAndCategories();
-            loadSupportInfo();
+        if(!hasActive) {
+            container.innerHTML = '<div class="text-sub text-center small col-12">No payment methods configured by admin.</div>';
+        }
+    }
+
+    function selectMFS(name, num) {
+        chosenMFSName = name;
+        chosenMFSNum = num;
+        loadPaymentMethods();
+
+        document.getElementById('payment-instruction-box').style.display = 'block';
+        document.getElementById('mfs-name-tag').innerText = name;
+        document.getElementById('mfs-num-tag').innerText = num;
+    }
+
+    function copyActiveAgentNum() {
+        if(!chosenMFSNum) return;
+        navigator.clipboard.writeText(chosenMFSNum);
+        showCustomAlert('Number copied to clipboard: ' + chosenMFSNum);
+    }
+
+    function submitDepositRequest() {
+        let amount = parseFloat(document.getElementById('deposit-amount').value);
+        let trx = document.getElementById('deposit-trx').value.trim();
+
+        if(!chosenMFSName) return showCustomAlert('Please select a payment method (bKash/Nagad/Rocket)!');
+        if(isNaN(amount) || amount < 20) return showCustomAlert('Minimum deposit amount is ৳20!');
+        if(!trx) return showCustomAlert('Please enter the Transaction ID (TrxID)!');
+
+        let depositReq = {
+            id: 'DEP-' + Math.floor(100000 + Math.random() * 900000),
+            email: currentUser.email,
+            method: chosenMFSName,
+            number: chosenMFSNum,
+            amount: amount,
+            trx: trx,
+            status: 'Pending',
+            date: new Date().toLocaleString()
         };
-    </script>
+
+        let allDeposits = JSON.parse(localStorage.getItem('app_deposit_requests')) || [];
+        allDeposits.unshift(depositReq);
+        localStorage.setItem('app_deposit_requests', JSON.stringify(allDeposits));
+
+        // Also add to user history tracking as pending
+        let historyRecord = {
+            id: depositReq.id,
+            type: 'Deposit Request',
+            title: `${chosenMFSName} Deposit`,
+            amount: amount,
+            status: 'Pending',
+            date: depositReq.date
+        };
+        if(!currentUser.history) currentUser.history = [];
+        currentUser.history.unshift(historyRecord);
+
+        let users = JSON.parse(localStorage.getItem('app_users')) || [];
+        let uIndex = users.findIndex(u => u.email === currentUser.email);
+        if(uIndex !== -1) {
+            users[uIndex] = currentUser;
+            localStorage.setItem('app_users', JSON.stringify(users));
+        }
+        localStorage.setItem('app_current_user', JSON.stringify(currentUser));
+
+        document.getElementById('deposit-amount').value = '';
+        document.getElementById('deposit-trx').value = '';
+        document.getElementById('payment-instruction-box').style.display = 'none';
+        chosenMFSName = '';
+        chosenMFSNum = '';
+        loadPaymentMethods();
+
+        showCustomAlert('Deposit request submitted successfully! Waiting for admin approval.');
+    }
+
+    function loadUserHistory() {
+        updateUserBalanceDisplay();
+        let container = document.getElementById('user-history-list');
+        container.innerHTML = '';
+
+        if(!currentUser.history || currentUser.history.length === 0) {
+            container.innerHTML = '<div class="text-sub text-center py-3 small">No transaction history found.</div>';
+            return;
+        }
+
+        currentUser.history.forEach(item => {
+            let badgeColor = item.status === 'Pending' ? 'bg-warning text-dark' : (item.type === 'Purchase' ? 'bg-success' : 'bg-primary');
+            let detailsHtml = '';
+
+            if(item.mails && item.mails.length > 0) {
+                let formattedMails = item.mails.join('\n');
+                detailsHtml = `
+                    <div class="mt-2">
+                        <textarea class="form-control font-monospace text-xs bg-dark text-info" rows="3" readonly>${formattedMails}</textarea>
+                    </div>
+                `;
+            }
+
+            container.innerHTML += `
+                <div class="deposit-box mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-white small">${item.title}</span>
+                        <span class="badge ${badgeColor} px-2 py-1">${item.status || item.type}</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-sub" style="font-size: 12px;">
+                        <span>Amount: <b class="text-white">৳${Number(item.amount).toFixed(2)}</b></span>
+                        <span>${item.date}</span>
+                    </div>
+                    ${detailsHtml}
+                </div>
+            `;
+        });
+    }
+
+    function loadUserProfile() {
+        updateUserBalanceDisplay();
+        document.getElementById('profile-email-text').innerText = currentUser.email;
+        document.getElementById('profile-balance-text').innerText = Number(currentUser.balance || 0).toFixed(2);
+        
+        let purchasedContainer = document.getElementById('profile-purchased-mails-list');
+        purchasedContainer.innerHTML = '';
+
+        let purchases = (currentUser.history || []).filter(h => h.type === 'Purchase');
+        if(purchases.length === 0) {
+            purchasedContainer.innerHTML = '<div class="text-sub small text-center py-2">No purchased mails found.</div>';
+            return;
+        }
+
+        purchases.forEach(p => {
+            let mailsText = p.mails ? p.mails.join('\n') : '';
+            purchasedContainer.innerHTML += `
+                <div class="deposit-box mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-white small">${p.title} (${p.qty} pcs)</span>
+                        <span class="text-sub" style="font-size: 11px;">${p.date}</span>
+                    </div>
+                    <textarea class="form-control font-monospace text-xs bg-dark text-info mt-1" rows="3" readonly>${mailsText}</textarea>
+                </div>
+            `;
+        });
+    }
+
+    // Initialize application state on page load
+    window.onload = function() {
+        checkLoginState();
+    };
+</script>
 </body>
 </html>
